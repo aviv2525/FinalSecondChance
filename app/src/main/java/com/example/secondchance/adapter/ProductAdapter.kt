@@ -89,28 +89,29 @@ class ProductAdapter(
             binding.tvProductName.text = product.name
             binding.tvProductPrice.text = product.price
 
-            if (!product.imageUri.isNullOrEmpty()) {
-                Glide.with(binding.root.context)
-                    .load(product.imageUri.toUri())
+            val context = binding.root.context
+            val imageSource = product.imageUri
+
+            if (!imageSource.isNullOrEmpty()) {
+                Glide.with(context)
+                    .load(Uri.parse(imageSource))
                     .override(200, 200)
                     .centerCrop()
                     .into(binding.ivProductImage)
             } else {
-                Glide.with(binding.root.context)
+                Glide.with(context)
                     .load(product.imageRes)
                     .override(200, 200)
                     .centerCrop()
                     .into(binding.ivProductImage)
             }
 
-            binding.root.setOnClickListener {
-                onItemClick(product)
-            }
-
+            binding.root.setOnClickListener { onItemClick(product) }
             binding.root.setOnLongClickListener {
                 onItemLongClick(product)
                 true
             }
         }
+
     }
 }

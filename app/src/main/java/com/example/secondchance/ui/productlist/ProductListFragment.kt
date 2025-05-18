@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -16,6 +17,7 @@ import com.example.secondchance.R
 import com.example.secondchance.adapter.SellerAdapter
 import com.example.secondchance.data.model.Product
 import com.example.secondchance.databinding.FragmentProductListBinding
+import viewmodel.SellerViewModel
 import com.example.secondchance.adapter.ProductAdapter as ProductAdapter
 
 
@@ -27,6 +29,8 @@ class ProductListFragment : Fragment((R.layout.fragment_product_list)) {
     private lateinit var productViewModel: ProductViewModel
     private lateinit var productAdapter: ProductAdapter
     private lateinit var sellerAdapter: SellerAdapter
+
+    private val sellerViewModel: SellerViewModel by viewModels()
 
 
     override fun onCreateView(
@@ -48,7 +52,40 @@ class ProductListFragment : Fragment((R.layout.fragment_product_list)) {
         setupRecyclerView()
         observeProducts()
         addDefaultProductsIfNeeded()
+        sellerViewModel.fetchSellers()
 
+        // new :
+        productViewModel.productList.observe(viewLifecycleOwner) { products ->
+            sellerViewModel.sellers.observe(viewLifecycleOwner) { sellers ->
+
+                val updatedSellers = sellers.map { seller ->
+                    val sellerProducts = products.filter { it.sellerId == seller.sellerId }
+                    seller.copy(products = sellerProducts)
+                }
+
+                sellerAdapter = SellerAdapter(
+                    sellers = updatedSellers,
+                    onProductClick = { product ->
+                        val bundle = Bundle().apply {
+                            putParcelable("product", product)
+                        }
+                        findNavController().navigate(
+                            R.id.action_productListFragment_to_productDetailFragment,
+                            bundle
+                        )
+                    },
+                    onProductLongClick = { product ->
+                        showOptionsDialog(product)
+                    }
+                )
+                binding.rvSellers.adapter = sellerAdapter
+            }
+        }
+
+
+
+
+        //old :
         productViewModel.productList.observe(viewLifecycleOwner) { products ->
             productViewModel.sellerList.observe(viewLifecycleOwner) { sellers ->
 

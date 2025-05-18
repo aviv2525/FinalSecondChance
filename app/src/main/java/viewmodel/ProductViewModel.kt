@@ -8,7 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.secondchance.R
 import com.example.secondchance.data.model.Product
 import com.example.secondchance.data.model.Seller
-import com.example.secondchance.data.repository.ProductRepository
+import com.example.secondchance.repository.ProductRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 

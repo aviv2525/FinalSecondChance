@@ -3,8 +3,8 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.kapt)
     id("kotlin-parcelize")
-    id("kotlin-kapt")
     alias(libs.plugins.androidx.navigation.safe.args)
+    alias(libs.plugins.google.services)
 }
 
 android {
@@ -50,6 +50,18 @@ dependencies {
 */
 //    implementation(libs.androidx.lifecycle.viewmodel.ktx)
 //    implementation(libs.androidx.lifecycle.livedata.ktx)
+
+    //FireBase
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.firestore.ktx)
+    implementation(libs.firebase.analytics.ktx)
+
+    // Retrofit
+    implementation(libs.retrofit)
+    implementation(libs.retrofit.converter.gson)
+    implementation(libs.coroutines.core)
+    implementation(libs.coroutines.android)
+
     implementation(libs.room.runtime)
     kapt(libs.room.compiler)
     implementation(libs.glide)
