@@ -1,12 +1,15 @@
 package com.example.secondchance.ui.productlist
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.secondchance.R
 import com.example.secondchance.adapter.ProductAdapter
 import com.example.secondchance.data.model.Product
 import com.example.secondchance.databinding.FragmentApiProductListBinding
@@ -34,21 +37,28 @@ class ApiProductListFragment : Fragment() {
         setupRecyclerView()
         observeProducts()
 
-        // Fetch on first load
         viewModel.fetchProductsFromApi()
 
-        binding.btnRefreshApi.setOnClickListener {
-            viewModel.fetchProductsFromApi()
+        binding.btnAddProduct.setOnClickListener {
+            val action = ApiProductListFragmentDirections
+                .actionApiProductListFragmentToAddEditProductFragment(null)
+            findNavController().navigate(action)
         }
     }
 
     private fun setupRecyclerView() {
         adapter = ProductAdapter(
             onItemClick = { product ->
-                // אפשר לנווט כאן לעמוד פרטי מוצר אם רוצים
+                val bundle = Bundle().apply {
+                    putParcelable("product", product)
+                }
+                findNavController().navigate(
+                    R.id.action_apiProductListFragment_to_productDetailFragment,
+                    bundle
+                )
             },
             onItemLongClick = { product ->
-                // אפשר להוסיף למועדפים כאן אם רוצים
+                showOptionsDialog(product)
             }
         )
         binding.rvApiProducts.layoutManager = LinearLayoutManager(requireContext())
@@ -56,9 +66,38 @@ class ApiProductListFragment : Fragment() {
     }
 
     private fun observeProducts() {
-        viewModel.apiProducts.observe(viewLifecycleOwner) { products ->
+        viewModel.productList.observe(viewLifecycleOwner) { products ->
             adapter.submitList(products)
         }
+    }
+
+    private fun showOptionsDialog(product: Product) {
+        val options = arrayOf("Edit", "Delete")
+
+        AlertDialog.Builder(requireContext())
+            .setTitle("Please Select")
+            .setItems(options) { _, which ->
+                when (which) {
+                    0 -> {
+                        val action = ApiProductListFragmentDirections
+                            .actionApiProductListFragmentToAddEditProductFragment(product)
+                        findNavController().navigate(action)
+                    }
+                    1 -> {
+                        AlertDialog.Builder(requireContext())
+                            .setMessage("Are you sure you want to delete?")
+                            .setPositiveButton("Delete") { dialog, _ ->
+                                viewModel.deleteProduct(product)
+                                dialog.dismiss()
+                            }
+                            .setNegativeButton("Cancel") { dialog, _ ->
+                                dialog.dismiss()
+                            }
+                            .show()
+                    }
+                }
+            }
+            .show()
     }
 
     override fun onDestroyView() {

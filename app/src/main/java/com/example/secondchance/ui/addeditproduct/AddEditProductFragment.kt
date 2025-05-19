@@ -13,14 +13,14 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import viewmodel.ProductViewModel
 import com.example.secondchance.R
 import com.example.secondchance.data.model.Product
 import com.example.secondchance.data.model.Seller
 import com.example.secondchance.databinding.FragmentAddEditProductBinding
+import viewmodel.ProductApiViewModel
 import java.io.File
 
 class AddEditProductFragment : Fragment() {
@@ -28,7 +28,7 @@ class AddEditProductFragment : Fragment() {
     private var _binding: FragmentAddEditProductBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var viewModel: ProductViewModel
+    private val viewModel: ProductApiViewModel by viewModels()
     private lateinit var sellerList: List<Seller>
     private lateinit var selectedSeller: Seller
     private var selectedImageUri: Uri? = null
@@ -58,7 +58,6 @@ class AddEditProductFragment : Fragment() {
         savedInstanceState: Bundle?,
     ): View {
         _binding = FragmentAddEditProductBinding.inflate(inflater, container, false)
-        viewModel = ViewModelProvider(requireActivity())[ProductViewModel::class.java]
 
         val product = args.product
         val isEditMode = product != null
@@ -141,7 +140,8 @@ class AddEditProductFragment : Fragment() {
                 price = "$price ₪",
                 description = description,
                 imageUri = selectedImageUri?.toString(),
-                sellerId = selectedSeller.sellerId
+                imageRes = R.drawable.second_chance_def,
+                sellerId = "api"
             )
 
             if (isEditMode) {
@@ -150,8 +150,14 @@ class AddEditProductFragment : Fragment() {
                 viewModel.addProductToSeller(selectedSeller.sellerId, finalProduct)
             }
 
-            Toast.makeText(requireContext(), getString(R.string.product_saved_successfully), Toast.LENGTH_SHORT).show()
-            findNavController().navigateUp()
+
+            viewModel.operationFinished.observe(viewLifecycleOwner) { finished ->
+                if (finished == true) {
+                    Toast.makeText(requireContext(), getString(R.string.product_saved_successfully), Toast.LENGTH_SHORT).show()
+                    findNavController().navigateUp()
+                }
+            }
+
         }
 
         binding.backToListButton1.setOnClickListener {

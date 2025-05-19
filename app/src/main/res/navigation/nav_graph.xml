@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/productListFragment">
+    app:startDestination="@id/apiProductListFragment">
 
     <fragment
         android:id="@+id/addEditProductFragment"
@@ -66,7 +66,7 @@
 
         <action
             android:id="@+id/action_productListFragment_to_settingsFragment"
-            app:destination="@id/settingsFragment" />
+            app:destination="@id/productDetailFragment" />
     </fragment>
     <fragment
         android:id="@+id/sellerDetailFragment"
@@ -89,13 +89,16 @@
 
     </fragment>
     <fragment
-        android:id="@+id/settingsFragment"
-        android:name="com.example.secondchance.SettingsFragment"
-        android:label="SettingsFragment" >
+        android:id="@+id/apiProductListFragment"
+        android:name="com.example.secondchance.ui.productlist.ApiProductListFragment"
+        android:label="API Products"
+        tools:layout="@layout/fragment_api_product_list">
         <action
-            android:id="@+id/action_settingsFragment_to_productListFragment"
-            app:destination="@id/productListFragment"
-            app:popUpTo="@id/productListFragment" />
+            android:id="@+id/action_apiProductListFragment_to_addEditProductFragment"
+            app:destination="@id/addEditProductFragment" />
+        <action
+            android:id="@+id/action_apiProductListFragment_to_productDetailFragment"
+            app:destination="@id/productDetailFragment" />
     </fragment>
     <activity
         android:id="@+id/mainActivity"

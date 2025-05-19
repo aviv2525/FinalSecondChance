@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.secondchance.data.model.Seller
+import com.example.secondchance.repository.SellerRepository
 
 class SellerViewModel : ViewModel() {
 

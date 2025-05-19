@@ -86,32 +86,32 @@ class ProductListFragment : Fragment((R.layout.fragment_product_list)) {
 
 
         //old :
-        productViewModel.productList.observe(viewLifecycleOwner) { products ->
-            productViewModel.sellerList.observe(viewLifecycleOwner) { sellers ->
-
-                val updatedSellers = sellers.map { seller ->
-                    val sellerProducts = products.filter { it.sellerId == seller.sellerId }
-                    seller.copy(products = sellerProducts)
-                }
-
-                sellerAdapter = SellerAdapter(
-                    sellers = updatedSellers,
-                    onProductClick = { product ->
-                        val bundle = Bundle().apply {
-                            putParcelable("product", product)
-                        }
-                        findNavController().navigate(
-                            R.id.action_productListFragment_to_productDetailFragment,
-                            bundle
-                        )
-                    },
-                    onProductLongClick = { product ->
-                        showOptionsDialog(product)
-                    }
-                )
-                binding.rvSellers.adapter = sellerAdapter
-            }
-        }
+//        productViewModel.productList.observe(viewLifecycleOwner) { products ->
+//            productViewModel.sellerList.observe(viewLifecycleOwner) { sellers ->
+//
+//                val updatedSellers = sellers.map { seller ->
+//                    val sellerProducts = products.filter { it.sellerId == seller.sellerId }
+//                    seller.copy(products = sellerProducts)
+//                }
+//
+//                sellerAdapter = SellerAdapter(
+//                    sellers = updatedSellers,
+//                    onProductClick = { product ->
+//                        val bundle = Bundle().apply {
+//                            putParcelable("product", product)
+//                        }
+//                        findNavController().navigate(
+//                            R.id.action_productListFragment_to_productDetailFragment,
+//                            bundle
+//                        )
+//                    },
+//                    onProductLongClick = { product ->
+//                        showOptionsDialog(product)
+//                    }
+//                )
+//                binding.rvSellers.adapter = sellerAdapter
+//            }
+//        }
 
         binding.addButton.setOnClickListener {
             val action = ProductListFragmentDirections
